@@ -2,52 +2,65 @@ import turtle
 import ball
 import random
 
+class balldb():
+    def __init__(self):
+        self.ball = []
+        self.border = border()
+
+    def create(self, ball_num):
+        b = border()
+        for i in range(ball_num):
+            size = random.uniform(0.01, 0.1) * b.canvas_width
+            x = (random.randint(int(-1*b.canvas_width + size), int(b.canvas_width - size)))
+            y = (random.randint(int(-1*b.canvas_height + size), int(b.canvas_height - size)))
+            vx = (2*random.uniform(-1.0, 1.0))
+            vy = (2*random.uniform(-1.0, 1.0))
+            ball_color = ((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+            tball = ball.ball(x=x, y=y, vx=vx, vy=vy, size=size, color=ball_color)
+            self.ball.append(tball)
+
+class border():
+    def __init__(self):
+        self.canvas_width = turtle.screensize()[0]
+        self.canvas_height = turtle.screensize()[1]
+
+    def draw_border(self):
+        turtle.penup()
+        turtle.goto(-self.canvas_width, -self.canvas_height)
+        turtle.pensize(10)
+        turtle.pendown()
+        turtle.color((0, 0, 0))
+        for i in range(2):
+            turtle.forward(2*self.canvas_width)
+            turtle.left(90)
+            turtle.forward(2*self.canvas_height)
+            turtle.left(90)
+
+class run():
+    def __init__(self, num_ball):
+        turtle.speed(0)
+        turtle.tracer(0)
+        turtle.hideturtle()
+        turtle.colormode(255)
+        self.num = num_ball
+        self.ballset =  balldb()
+        self.ballset.create(self.num)
+        self.dt = 1
+        self.border = self.ballset.border
+    
+    def run(self):
+        while (True):
+            turtle.clear()
+            self.border.draw_border()
+            for i in self.ballset.ball:
+                i.draw_ball()
+                i.move_ball(self.dt)
+                i.update_ball_velocity(self.border.canvas_width,self.border.canvas_height)
+            turtle.update()
+
 num_balls = int(input("Number of balls to simulate: "))
-turtle.speed(0)
-turtle.tracer(0)
-turtle.hideturtle()
-canvas_width = turtle.screensize()[0]
-canvas_height = turtle.screensize()[1]
-print(turtle.screensize())
-print(canvas_width, canvas_height)
-ball_radius = 0.05 * canvas_width
-turtle.colormode(255)
-color_list = []
-xpos = []
-ypos = []
-vx = []
-vy = []
-ball_color = []
-
-# create random number of balls, num_balls, located at random positions within the canvas; each ball has a random velocity value in the x and y direction and is painted with a random color
-for i in range(num_balls):
-    xpos.append(random.randint(int(-1*canvas_width + ball_radius), int(canvas_width - ball_radius)))
-    ypos.append(random.randint(int(-1*canvas_height + ball_radius), int(canvas_height - ball_radius)))
-    vx.append(2*random.uniform(-1.0, 1.0))
-    vy.append(2*random.uniform(-1.0, 1.0))
-    ball_color.append((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-
-def draw_border():
-    turtle.penup()
-    turtle.goto(-canvas_width, -canvas_height)
-    turtle.pensize(10)
-    turtle.pendown()
-    turtle.color((0, 0, 0))
-    for i in range(2):
-        turtle.forward(2*canvas_width)
-        turtle.left(90)
-        turtle.forward(2*canvas_height)
-        turtle.left(90)
-
-dt = 1 # time step
-while (True):
-    turtle.clear()
-    draw_border()
-    for i in range(num_balls):
-        ball.draw_ball(ball_color[i], ball_radius, xpos[i], ypos[i])
-        ball.move_ball(i, xpos, ypos, vx, vy, dt)
-        ball.update_ball_velocity(i, xpos, ypos, vx, vy, canvas_width, canvas_height, ball_radius)
-    turtle.update()
+st = run(num_balls)
+st.run()
 
 # hold the window; close it by clicking the window close 'x' mark
 turtle.done()
