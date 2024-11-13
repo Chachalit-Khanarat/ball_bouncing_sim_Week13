@@ -1,6 +1,7 @@
 import turtle
 import ball
 import random
+import math
 
 class balldb():
     def __init__(self):
@@ -16,8 +17,11 @@ class balldb():
             vx = (2*random.uniform(-1.0, 1.0))
             vy = (2*random.uniform(-1.0, 1.0))
             ball_color = ((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-            tball = ball.ball(x=x, y=y, vx=vx, vy=vy, size=size, color=ball_color)
+            mass =  (4/3) * math.pi * (size**3) * 2
+            tball = ball.ball(x=x, y=y, vx=vx, vy=vy, size=size, color=ball_color, mass=mass)
             self.ball.append(tball)
+
+
 
 class border():
     def __init__(self):
@@ -56,6 +60,10 @@ class run():
                 i.draw_ball()
                 i.move_ball(self.dt)
                 i.update_ball_velocity(self.border.canvas_width,self.border.canvas_height)
+                for j in self.ballset.ball :
+                    if i == j:
+                        continue
+                    i.resolve_collision(j)
             turtle.update()
 
 num_balls = int(input("Number of balls to simulate: "))
